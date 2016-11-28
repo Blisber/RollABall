@@ -1,0 +1,58 @@
+using UnityEngine;
+using UnityEngine.UI;
+using System.Collections;
+
+public class PlayerController : MonoBehaviour {
+
+	public float speed;
+	public Text countText;
+	public Text winText;
+
+	private Rigidbody rb;
+	// Rigidbody: Control of an objects position through physics simulation
+	private int count;
+
+	void Start ()
+	// The code below goes in effect once the game starts
+	{
+		rb = GetComponent<Rigidbody>();
+		count = 0;
+		SetCountText ();
+		winText.text = "";
+		//Sets everything in motion and prepares it for when the game ends
+	}
+
+	void FixedUpdate ()
+	// Called before using physics 
+	{
+		float moveHorizontal = Input.GetAxis ("Horizontal");
+		float moveVertical = Input.GetAxis ("Vertical");
+
+		Vector3 movement = new Vector3 (moveHorizontal, 0.0f, moveVertical);
+		//Representation of 3D Vectors and Points. 
+		rb.AddForce (movement * speed);
+		//Builds momentum and allows player to move
+	}
+
+	void OnTriggerEnter(Collider other) 
+	{
+		if (other.gameObject.CompareTag ( "Pick Up"))
+		{
+			other.gameObject.SetActive (false);
+			count = count + 1;
+			SetCountText ();
+		//Tells player what is ok to collide with "Walls" and what to pick up "cubes".
+		// Once player is in contact with non collidable object, 1 count will be added to pickup.
+		}
+	}
+
+	void SetCountText ()
+	{
+		countText.text = "Count: " + count.ToString ();
+		if (count >= 11)
+		{
+			winText.text = "You WIN!!! Congratulations!";
+			//Once player has collected 11 cubes, win text shows up
+		}
+	}
+}
